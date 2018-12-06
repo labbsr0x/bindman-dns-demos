@@ -1,0 +1,60 @@
+# docker stack deploy -c docker-compose.yml sandman-dns-agent
+version: '3.5'
+
+services:
+
+  bind:
+    restart: always
+    image: sameersbn/bind:9.11.3-20180713
+    ports:
+    - "53:53/udp"
+    - "53:53/tcp"
+    - "10000:10000/tcp"
+    volumes:
+    - ./bind9:/data/bind/etc
+
+  manager:
+    depends_on: 
+      - "bind"
+    image: abilioesteves/sandman-bind9-manager:0.0.16
+    volumes:
+      - ./keys:/data
+    ports:
+      - 7070:7070/tcp
+    environment:
+      - SANDMAN_NAMESERVER_ADDRESS=bind
+      - SANDMAN_NAMESERVER_KEYFILE=Ktest.com.+157+50086.key
+      - SANDMAN_NAMESERVER_ZONE=test.com
+      - SANDMAN_DNS_REMOVAL_DELAY=1
+      - SANDMAN_MODE=DEBUG
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 2
+        window: 5s
+  
+  listener:
+    depends_on: 
+      - "manager"
+    image: abilioesteves/sandman-swarm-listener:0.0.6
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - DOCKER_API_VERSION=1.38
+      - SANDMAN_DNS_MANAGER_ADDRESS=manager:7070
+      - SANDMAN_REVERSE_PROXY_ADDRESS=0.0.0.0
+      - SANDMAN_DNS_TAGS=internal,intranet,internet
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 2
+        window: 5s
+
+networks:
+  default:
+    ipam:
+      driver: default
+      config:
+        - subnet: 192.168.99.0/24
