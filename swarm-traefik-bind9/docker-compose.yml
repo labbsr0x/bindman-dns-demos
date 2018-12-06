@@ -4,7 +4,6 @@ version: '3.5'
 services:
 
   bind:
-    restart: always
     image: sameersbn/bind:9.11.3-20180713
     ports:
     - "53:53/udp"
@@ -12,6 +11,12 @@ services:
     - "10000:10000/tcp"
     volumes:
     - ./bind9:/data/bind/etc
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 2
+        window: 5s
 
   manager:
     depends_on: 
@@ -51,10 +56,3 @@ services:
         delay: 5s
         max_attempts: 2
         window: 5s
-
-networks:
-  default:
-    ipam:
-      driver: default
-      config:
-        - subnet: 192.168.99.0/24
