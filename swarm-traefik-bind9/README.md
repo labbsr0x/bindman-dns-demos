@@ -56,13 +56,10 @@ docker stack deploy -c hello.yml hello
 This will create a DNS entry for the hello service pointing to `0.0.0.0` (listener.SANDMAN_REVERSE_PROXY_ADDRESS env). You can check this with a simple `nslookup` on the swarm host:
 
 ```
-nslookup hello.test.com bind
+nslookup hello.test.com <host ip>
 ```
 
 After that you can remove the hello service with `docker stack rm hello`. 
-By default, the removal is delayed for 1 min (configurable with the manager.SANDMAN_DNS_REMOVAL_DELAY env). After that, rerun the `nslookup` command.
-The configured DNS mapping should be resolved.
-
-
-
+By default, the removal is delayed for 1 min (configurable with the manager.SANDMAN_DNS_REMOVAL_DELAY env). After that period, rerun the `nslookup` command.
+The configured DNS mapping should be removed.
 
