@@ -24,7 +24,7 @@ docker stack deploy -c docker-compose.yml sandman-dns-agent
 The following services need to coexist and be able to talk to each other over a network:
 
 1. [**Sandman DNS Listener**](https://github.com/labbsr0x/sandman-dns-listener): this service sits on a Swarm cluster listening for Swarm events. 
-In this demo, we expect Swarm Services to be annotated with trafik-specific labels that defines which hostname should be given to that service instance.
+In this demo, we expect Swarm Services to be annotated with traefik-specific labels that defines which hostname should be given to that service instance.
 
 2. [**Sandman DNS Manager**](https://github.com/labbsr0x/sandman-dns-manager): this service can sit literally anywhere, but must be reachable to the listener and must be able to reach the Bind9 Server over a network. When the listener identifies new services and their respective hostnames, it sends the information to the manager via a proper [Webhook](https://github.com/labbsr0x/sandman-dns-webhook). The manager then updates its DNS Server with the given hostname. Keep in mind that a Sandman DNS Manager instance can manage only **one** zone.
 
