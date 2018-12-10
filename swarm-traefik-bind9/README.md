@@ -1,9 +1,27 @@
-# swarm-traefik-bind9
+# swarm-traefik-bind9 demo
 
 In this folder you will find an example of how one would:
 
 1. Listen for Docker **Swarm** events; and
 2. Update a **Bind9** DNS Server instance with hostnames defined with **Traefik** service deployment labels.
+
+# Try it yourself
+
+First, bring up all the DNS Bind9 server and Bindman-DNS stuff:
+
+`docker stack deploy -c docker-compose.yml sandman-dns-agent`
+
+Then, bring a **hello** service up:
+
+`docker stack deploy -c hello.yml hello`
+
+If everything goes right, you should execute 
+
+`nslookup hello.test.com <host ip>`
+
+Where `<host ip>` usually is `localhost`, so it would be `nslookup hello.test.com localhost`
+
+and check that the *hello.test.com* points now to 0.0.0.0
 
 # docker-compose.yml
 
@@ -16,19 +34,19 @@ Keep in mind this is for demonstration purpose only and you'll probably not find
 To take a look at this sample, you **must** execute this command in a Docker Swarm, the following way:
 
 ```
-docker stack deploy -c docker-compose.yml sandman-dns-agent
+docker stack deploy -c docker-compose.yml bindman-dns-agent
 ```
 
 # Context
 
 The following services need to coexist and be able to talk to each other over a network:
 
-1. [**Sandman DNS Listener**](https://github.com/labbsr0x/sandman-dns-listener): this service sits on a Swarm cluster listening for Swarm events. 
+1. [**Bindman-DNS Listener**](https://github.com/labbsr0x/bindman-dns-listener): this service sits on a Swarm cluster listening for Swarm events. 
 In this demo, we expect Swarm Services to be annotated with traefik-specific labels that defines which hostname should be given to that service instance.
 
-2. [**Sandman DNS Manager**](https://github.com/labbsr0x/sandman-dns-manager): this service can sit literally anywhere, but must be reachable to the listener and must be able to reach the Bind9 Server over a network. When the listener identifies new services and their respective hostnames, it sends the information to the manager via a proper [Webhook](https://github.com/labbsr0x/sandman-dns-webhook). The manager then updates its DNS Server with the given hostname. Keep in mind that a Sandman DNS Manager instance can manage only **one** zone.
+2. [**Bindman-DNS Manager**](https://github.com/labbsr0x/bindman-dns-manager): this service can sit literally anywhere, but must be reachable to the listener and must be able to reach the Bind9 Server over a network. When the listener identifies new services and their respective hostnames, it sends the information to the manager via a proper [Webhook](https://github.com/labbsr0x/bindman-dns-webhook). The manager then updates its DNS Server with the given hostname. Keep in mind that a Bindman-DNS Manager instance can manage only **one** zone.
 
-3. **Bind9 Server**: this service defines a DNS Server responsible for resolving DNS queries. Which DNS queries this service can solve or not are managed by the Sandman DNS Manager.
+3. **Bind9 Server**: this service defines a DNS Server responsible for resolving DNS queries. Which DNS queries this service can solve or not are managed by theBindman-DNS Manager.
 For this demo, the Bind9 Server owns the zone `test.com` and every DNS update needs to be in regards to domains within that zone, i.e., `<domain>.test.com`. 
 
 # Secure communication
@@ -53,13 +71,13 @@ You can use the given `hello.yml` to see the magic happening:
 docker stack deploy -c hello.yml hello
 ```
 
-This will create a DNS entry for the hello service pointing to `0.0.0.0` (listener.SANDMAN_REVERSE_PROXY_ADDRESS env). You can check this with a simple `nslookup` on the swarm host:
+This will create a DNS entry for the hello service pointing to `0.0.0.0` (listener.BINDMAN_REVERSE_PROXY_ADDRESS env). You can check this with a simple `nslookup` on the swarm host:
 
 ```
 nslookup hello.test.com <host ip>
 ```
 
 After that you can remove the hello service with `docker stack rm hello`. 
-By default, the removal is delayed for 1 min (configurable with the manager.SANDMAN_DNS_REMOVAL_DELAY env). After that period, rerun the `nslookup` command.
+By default, the removal is delayed for 1 min (configurable with the manager.BINDMAN_DNS_REMOVAL_DELAY env). After that period, rerun the `nslookup` command.
 The configured DNS mapping should be removed.
 
