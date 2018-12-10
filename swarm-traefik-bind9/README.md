@@ -17,11 +17,9 @@ Then, bring a **hello** service up:
 
 If everything goes right, you should execute 
 
-`nslookup hello.test.com <host ip>`
+`nslookup hello.test.com <host ip>` and check that the *hello.test.com* points now to 0.0.0.0
 
-Where `<host ip>` usually is `localhost`, so it would be `nslookup hello.test.com localhost`
-
-and check that the *hello.test.com* points now to 0.0.0.0
+If you are running on your local machine, `<host ip>` usually is `localhost`, so it would be `nslookup hello.test.com localhost`
 
 # docker-compose.yml
 
