@@ -58,24 +58,3 @@ dnssec-keygen -a HMAC-MD5 -b 512 -n HOST test.com
 ```
 
 [Go here](http://www.firewall.cx/linux-knowledgebase-tutorials/system-and-network-services/831-linux-bind-ipadd-data-file.html) to understand a bit more about how to properly configure your BIND DNS server.
-
-# Try it yourself
-
-After deploying the `docker-compose.yml` with a `docker stack deploy` command, run any other service you wish on the Swarm with the proper deployment labels.
-
-You can use the given `hello.yml` to see the magic happening:
-
-```
-docker stack deploy -c hello.yml hello
-```
-
-This will create a DNS entry for the hello service pointing to `0.0.0.0` (listener.BINDMAN_REVERSE_PROXY_ADDRESS env). You can check this with a simple `nslookup` on the swarm host:
-
-```
-nslookup hello.test.com <host ip>
-```
-
-After that you can remove the hello service with `docker stack rm hello`. 
-By default, the removal is delayed for 1 min (configurable with the manager.BINDMAN_DNS_REMOVAL_DELAY env). After that period, rerun the `nslookup` command.
-The configured DNS mapping should be removed.
-
