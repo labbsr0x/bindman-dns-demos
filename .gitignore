@@ -1,2 +1,4 @@
 .DS_Store
 *.jnl
+swarm-traefik-bind9/bind9/db.test.com
+swarm-traefik-bind9/keys/hello.test.com
