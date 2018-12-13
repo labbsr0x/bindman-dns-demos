@@ -4,13 +4,13 @@ version: '3.5'
 services:
 
   bind:
-    image: sameersbn/bind:9.11.3-20180713
+    image: abilioesteves/bind9:0.0.3
     ports:
     - "53:53/udp"
     - "53:53/tcp"
     - "10000:10000/tcp"
     volumes:
-    - ./bind9:/data/bind/etc
+    - data:/keys
     deploy:
       restart_policy:
         condition: on-failure
@@ -21,9 +21,9 @@ services:
   manager:
     depends_on: 
       - "bind"
-    image: abilioesteves/bindman-dns-bind9:0.0.1
+    image: abilioesteves/bindman-dns-bind9:0.0.3
     volumes:
-      - ./keys:/data
+      - data:/data
     ports:
       - 7070:7070/tcp
     environment:
@@ -42,7 +42,7 @@ services:
   listener:
     depends_on: 
       - "manager"
-    image: abilioesteves/bindman-dns-swarm-listener:0.0.3
+    image: abilioesteves/bindman-dns-swarm-listener:0.0.6
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     environment:
@@ -56,3 +56,6 @@ services:
         delay: 5s
         max_attempts: 2
         window: 5s
+
+volumes:
+  data:

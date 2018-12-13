@@ -1,4 +1,4 @@
-# docker-stack deploy -c docker-compose.yml hello
+# docker stack deploy -c hello.yml hello
 version: '3.5'
 
 services:

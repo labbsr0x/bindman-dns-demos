@@ -49,9 +49,9 @@ For this demo, the Bind9 Server owns the zone `test.com` and every DNS update ne
 
 # Secure communication
 
-On the `keys` folder, you will find the keys that enable secure communication between the manager and the Bind9 Server for the `test.com` zone.
+On the `/keys` folder of the `bind` service, you will find the keys that enable secure communication between the manager and the Bind9 Server for the `test.com` zone.
 
-If you want to define your own zones you will need to create a key on the bind9 server and mount them to the `/data` volume of the manager. For now, we support only `dnssec-keygen` generated keys. We used the following commands for the `test.com` zone:
+For now, we support only `dnssec-keygen` generated keys. We used the following commands for the `test.com` zone:
 
 ```
 dnssec-keygen -a HMAC-MD5 -b 512 -n HOST test.com
