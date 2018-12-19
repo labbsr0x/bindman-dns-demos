@@ -21,7 +21,7 @@ services:
   manager:
     depends_on: 
       - "bind"
-    image: abilioesteves/bindman-dns-bind9:0.0.3
+    image: abilioesteves/bindman-dns-bind9:0.0.6
     volumes:
       - data:/data
     ports:
@@ -42,7 +42,7 @@ services:
   listener:
     depends_on: 
       - "manager"
-    image: abilioesteves/bindman-dns-swarm-listener:0.0.6
+    image: abilioesteves/bindman-dns-swarm-listener:0.0.7
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     environment:
